@@ -1,16 +1,22 @@
 using System;
 using System.Runtime.CompilerServices;
 using UnityEngine;
-
+using TMPro;
+using UnityEngine.SceneManagement;
 public class kuskontrol : MonoBehaviour
 {
     public float ziplama = 5f;
+    public TextMeshProUGUI skorMetni;
+    public TextMeshProUGUI MaxSkorMetni;
+    public GameObject gameoverpanel;
     private int skor=0;
     private Rigidbody2D fizikMotoru;
 
     void Start()
     {
         fizikMotoru = GetComponent<Rigidbody2D>();
+        int kayitlirekor = PlayerPrefs.GetInt("EnYuksekSkor", 0);
+        MaxSkorMetni.text = "Rekor: " + kayitlirekor.ToString();
     }
 
 
@@ -25,8 +31,17 @@ public class kuskontrol : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("engel"))
         {
-            Time.timeScale = 0f;
+            
             Debug.Log("kuþ öldü...");
+            gameoverpanel.SetActive(true);
+            int eskirekor = PlayerPrefs.GetInt("En Yüksek Skor", 0);
+            if (skor > eskirekor)
+            {
+                PlayerPrefs.SetInt("EnYuksekSkor", skor);
+                PlayerPrefs.Save();
+                Debug.Log("Tebrikler yeni rekor!--->"+skor);
+            }
+            Time.timeScale = 0f;
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
@@ -35,7 +50,13 @@ public class kuskontrol : MonoBehaviour
         {
             skor++;
             Debug.Log("Skor: " + skor);
+            skorMetni.text = skor.ToString();
         }
+    }
+    public void yenidenbaslat()
+    {
+        Time.timeScale=1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name); 
     }
 }
 
