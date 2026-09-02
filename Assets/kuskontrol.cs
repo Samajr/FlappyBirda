@@ -8,6 +8,8 @@ public class kuskontrol : MonoBehaviour
     public float ziplama = 5f;
     public TextMeshProUGUI skorMetni;
     public TextMeshProUGUI MaxSkorMetni;
+    public TextMeshProUGUI PanelGuncelSkor;
+    public TextMeshProUGUI PanelEnYuksekSkor;
     public GameObject gameoverpanel;
     private int skor=0;
     private Rigidbody2D fizikMotoru;
@@ -22,7 +24,7 @@ public class kuskontrol : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began))
         {
             fizikMotoru.linearVelocity = Vector2.up * ziplama;
         }
@@ -34,13 +36,17 @@ public class kuskontrol : MonoBehaviour
             
             Debug.Log("kuþ öldü...");
             gameoverpanel.SetActive(true);
-            int eskirekor = PlayerPrefs.GetInt("En Yüksek Skor", 0);
+            int eskirekor = PlayerPrefs.GetInt("EnYuksekSkor", 0);
             if (skor > eskirekor)
             {
                 PlayerPrefs.SetInt("EnYuksekSkor", skor);
                 PlayerPrefs.Save();
                 Debug.Log("Tebrikler yeni rekor!--->"+skor);
             }
+            PanelGuncelSkor.text = "Skor: " + skor.ToString();
+            int enGuncelRekor = PlayerPrefs.GetInt("EnYuksekSkor", 0);
+            PanelEnYuksekSkor.text = "En Yüksek Skor: " + enGuncelRekor.ToString();
+
             Time.timeScale = 0f;
         }
     }
